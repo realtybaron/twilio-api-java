@@ -1,4 +1,4 @@
-package com.realtybaron.twilio;
+package com.socotech.twilio;
 
 import com.socotech.twilio.api.DefaultTwilioClient;
 import com.socotech.twilio.api.TwilioClient;
