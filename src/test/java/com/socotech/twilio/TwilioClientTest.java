@@ -15,7 +15,7 @@ import java.util.Map;
  * Time: 6:47 AM
  */
 public class TwilioClientTest {
-  protected TwilioClient twilioClient = new DefaultTwilioClient();
+  protected TwilioClient twilioClient = new DefaultTwilioClient(null, null);
 
   @Test
   public void testGetMessageList() throws Exception {
