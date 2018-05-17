@@ -2,7 +2,9 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/twilio-api.iml" filepath="$PROJECT_DIR$/twilio-api.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/twilio-api.iml" filepath="$PROJECT_DIR$/.idea/modules/twilio-api.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/twilio-api_main.iml" filepath="$PROJECT_DIR$/.idea/modules/twilio-api_main.iml" group="twilio-api" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/twilio-api_test.iml" filepath="$PROJECT_DIR$/.idea/modules/twilio-api_test.iml" group="twilio-api" />
     </modules>
   </component>
 </project>
