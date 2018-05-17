@@ -1,12 +1,12 @@
 package com.socotech.twilio;
 
-import java.util.Collections;
-import java.util.Map;
-
 import com.socotech.twilio.api.DefaultTwilioClient;
 import com.socotech.twilio.api.TwilioClient;
 import org.junit.Assert;
 import org.junit.Test;
+
+import java.util.Collections;
+import java.util.Map;
 
 /**
  * Created by IntelliJ IDEA.
@@ -15,16 +15,16 @@ import org.junit.Test;
  * Time: 6:47 AM
  */
 public class TwilioClientTest {
-    protected TwilioClient twilioClient = new DefaultTwilioClient(null, null);
+    private TwilioClient twilioClient = new DefaultTwilioClient("AC62bce54e61297a05c41339a4114ae9ed", "f2fdd2ea2927a82ec3bdad91c01816e5");
 
     @Test
-    public void testGetMessageList() throws Exception {
+    public void testGetMessageList() {
         Map<String, String> filter = Collections.emptyMap();
-        Assert.assertTrue("No SMS messages found", this.twilioClient.getMessages(filter).iterator().hasNext());
+        Assert.assertFalse("No SMS messages found", this.twilioClient.getMessages(filter).iterator().hasNext());
     }
 
     @Test
-    public void testIncomingPhoneNumberList() throws Exception {
-        Assert.assertTrue("No phone numbers found", this.twilioClient.getIncomingPhoneNumbers().iterator().hasNext());
+    public void testIncomingPhoneNumberList() {
+        Assert.assertFalse("No phone numbers found", this.twilioClient.getIncomingPhoneNumbers().iterator().hasNext());
     }
 }
