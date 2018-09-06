@@ -9,16 +9,16 @@ import com.twilio.sdk.verbs.Gather;
  * Time: 7:10 AM
  */
 public class GatherBuilder {
-  private int numDigits;
+    private int numDigits;
 
-  public GatherBuilder numDigits(int i) {
-    this.numDigits = i;
-    return this;
-  }
+    public GatherBuilder numDigits(int i) {
+        this.numDigits = i;
+        return this;
+    }
 
-  public Gather build() {
-    Gather verb = new Gather();
-    verb.setNumDigits(this.numDigits);
-    return verb;
-  }
+    public Gather build() {
+        Gather verb = new Gather();
+        verb.setNumDigits(this.numDigits);
+        return verb;
+    }
 }

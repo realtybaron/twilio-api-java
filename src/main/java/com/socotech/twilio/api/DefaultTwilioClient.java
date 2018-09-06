@@ -31,6 +31,7 @@ import java.util.concurrent.TimeUnit;
  * Time: 1:56 PM
  */
 public class DefaultTwilioClient implements TwilioClient {
+
     private TwilioRestClient restClient;
     /**
      * Cache provisioned phone numbers
@@ -107,7 +108,7 @@ public class DefaultTwilioClient implements TwilioClient {
 
     @Override
     public IncomingPhoneNumberList getIncomingPhoneNumbers() {
-        return restClient.getAccount().getIncomingPhoneNumbers();
+        return this.restClient.getAccount().getIncomingPhoneNumbers();
     }
 
     @Override

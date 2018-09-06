@@ -7,6 +7,6 @@ package com.socotech.twilio.api;
  * Time: 7:26 AM
  */
 public enum Method {
-  GET,
-  POST
+    GET,
+    POST
 }

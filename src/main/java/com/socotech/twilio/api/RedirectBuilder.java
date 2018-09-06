@@ -9,21 +9,21 @@ import com.twilio.sdk.verbs.Redirect;
  * Time: 8:04 AM
  */
 public class RedirectBuilder {
-  private String url;
-  private Method method = Method.POST;
+    private String url;
+    private Method method = Method.POST;
 
-  public RedirectBuilder(String url) {
-    this.url = url;
-  }
+    public RedirectBuilder(String url) {
+        this.url = url;
+    }
 
-  public RedirectBuilder method(Method method) {
-    this.method = method;
-    return this;
-  }
+    public RedirectBuilder method(Method method) {
+        this.method = method;
+        return this;
+    }
 
-  public Redirect build() {
-    Redirect verb = new Redirect(url);
-    verb.setMethod(method.name());
-    return verb;
-  }
+    public Redirect build() {
+        Redirect verb = new Redirect(url);
+        verb.setMethod(method.name());
+        return verb;
+    }
 }

@@ -21,21 +21,21 @@ import java.util.Map;
  */
 public interface TwilioClient {
 
-  public Call call(Map<String, String> params) throws TwilioRestException;
+    Call call(Map<String, String> params) throws TwilioRestException;
 
-  public String getOrProvisionNumber(String areaCode);
+    String getOrProvisionNumber(String areaCode);
 
-  public String getOrProvisionNumber(String areaCode, BigDecimal lat, BigDecimal lon);
+    String getOrProvisionNumber(String areaCode, BigDecimal lat, BigDecimal lon);
 
-  public String getOrProvisionNumber(String areaCode, String postalCode, BigDecimal lat, BigDecimal lon);
+    String getOrProvisionNumber(String areaCode, String postalCode, BigDecimal lat, BigDecimal lon);
 
-  public Message message(List<NameValuePair> params) throws TwilioRestException;
+    Message message(List<NameValuePair> params) throws TwilioRestException;
 
-  public MessageList getMessages(Map<String, String> filters);
+    MessageList getMessages(Map<String, String> filters);
 
-  public IncomingPhoneNumber createPhoneNumber(Map<String, String> params) throws TwilioRestException;
+    IncomingPhoneNumber createPhoneNumber(Map<String, String> params) throws TwilioRestException;
 
-  public IncomingPhoneNumberList getIncomingPhoneNumbers();
+    IncomingPhoneNumberList getIncomingPhoneNumbers();
 
-  public AvailablePhoneNumberList getAvailablePhoneNumbers(Map<String, String> vars);
+    AvailablePhoneNumberList getAvailablePhoneNumbers(Map<String, String> vars);
 }
