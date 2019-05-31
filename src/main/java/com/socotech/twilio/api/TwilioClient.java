@@ -38,4 +38,5 @@ public interface TwilioClient {
     IncomingPhoneNumberList getIncomingPhoneNumbers();
 
     AvailablePhoneNumberList getAvailablePhoneNumbers(Map<String, String> vars);
+
 }
