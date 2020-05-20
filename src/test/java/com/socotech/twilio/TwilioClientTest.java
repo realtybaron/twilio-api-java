@@ -15,6 +15,7 @@ import java.util.Map;
  * Time: 6:47 AM
  */
 public class TwilioClientTest {
+
     private TwilioClient twilioClient = new DefaultTwilioClient("AC62bce54e61297a05c41339a4114ae9ed", "f2fdd2ea2927a82ec3bdad91c01816e5");
 
     @Test
@@ -27,4 +28,5 @@ public class TwilioClientTest {
     public void testIncomingPhoneNumberList() {
         Assert.assertFalse("No phone numbers found", this.twilioClient.getIncomingPhoneNumbers().iterator().hasNext());
     }
+
 }

@@ -9,6 +9,7 @@ import com.twilio.sdk.verbs.Gather;
  * Time: 7:10 AM
  */
 public class GatherBuilder {
+
     private int numDigits;
 
     public GatherBuilder numDigits(int i) {
@@ -21,4 +22,5 @@ public class GatherBuilder {
         verb.setNumDigits(this.numDigits);
         return verb;
     }
+
 }

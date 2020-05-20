@@ -6,6 +6,7 @@ import com.google.common.base.MoreObjects;
  * Created by IntelliJ IDEA. User: marc Date: Apr 21, 2011 Time: 12:34:44 PM
  */
 public class TwilioCallback {
+
     public String To;
     public String From;
     public String CallSid;
@@ -22,8 +23,12 @@ public class TwilioCallback {
 
     @Override
     public String toString() {
-        MoreObjects.ToStringHelper helper = MoreObjects.toStringHelper(this);
-        helper.add("To", this.To).add("From", this.From).add("CallSid", this.CallSid).add("CallStatus", this.CallStatus).add("DialCallStatus", this.DialCallStatus);
-        return helper.toString();
+        return MoreObjects.toStringHelper(this)
+                .add("To", To)
+                .add("From", From)
+                .add("CallSid", CallSid)
+                .add("CallStatus", CallStatus)
+                .add("DialCallStatus", DialCallStatus)
+                .toString();
     }
 }

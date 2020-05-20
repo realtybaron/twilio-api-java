@@ -7,9 +7,9 @@ package com.socotech.twilio.api;
  * Time: 7:05 AM
  */
 public enum Voice {
-  man,
-  male,
-  alice,
-  woman,
-  female
+    man,
+    male,
+    alice,
+    woman,
+    female
 }

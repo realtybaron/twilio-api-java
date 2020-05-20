@@ -9,21 +9,23 @@ import com.twilio.sdk.verbs.Say;
  * Time: 7:20 AM
  */
 public class SayBuilder {
-  private Voice voice;
-  private String body;
 
-  public SayBuilder(String body) {
-    this.body = body;
-  }
+    private Voice voice;
+    private String body;
 
-  public SayBuilder voice(Voice voice) {
-    this.voice = voice;
-    return this;
-  }
+    public SayBuilder(String body) {
+        this.body = body;
+    }
 
-  public Say build() {
-    Say verb = new Say(body);
-    verb.setVoice(voice.name());
-    return verb;
-  }
+    public SayBuilder voice(Voice voice) {
+        this.voice = voice;
+        return this;
+    }
+
+    public Say build() {
+        Say verb = new Say(body);
+        verb.setVoice(voice.name());
+        return verb;
+    }
+
 }
