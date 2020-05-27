@@ -8,6 +8,6 @@ import com.google.common.base.Predicate;
 public class SuccessfulCall implements Predicate<TwilioCallback> {
     @Override
     public boolean apply(TwilioCallback input) {
-        return new CompletedCall().apply(input);
+        return new CompletedCall().test(input);
     }
 }

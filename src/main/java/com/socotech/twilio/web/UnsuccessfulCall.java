@@ -1,7 +1,6 @@
 package com.socotech.twilio.web;
 
 import com.google.common.base.Predicate;
-import com.google.common.base.Predicates;
 
 /**
  * Created by IntelliJ IDEA. User: marc Date: Apr 21, 2011 Time: 3:33:49 PM
@@ -9,6 +8,6 @@ import com.google.common.base.Predicates;
 public class UnsuccessfulCall implements Predicate<TwilioCallback> {
     @Override
     public boolean apply(TwilioCallback input) {
-        return Predicates.or(new BusyCall(), new CanceledCall(), new NoAnswerCall(), new FailedCall(), new MachineAnswered()).apply(input);
+        return new BusyCall().or(new CanceledCall()).or(new NoAnswerCall()).or(new FailedCall()).or(new MachineAnswered()).test(input);
     }
 }
