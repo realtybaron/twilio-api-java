@@ -32,7 +32,7 @@ import java.util.concurrent.TimeUnit;
  */
 public class DefaultTwilioClient implements TwilioClient {
 
-    private TwilioRestClient restClient;
+    private final TwilioRestClient restClient;
     /**
      * Cache provisioned phone numbers
      */
