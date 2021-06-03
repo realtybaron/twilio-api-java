@@ -8,7 +8,7 @@ import java.util.function.Predicate;
  */
 public abstract class CallStatus implements Predicate<TwilioCallback> {
 
-    private String value;
+    private final String value;
 
     protected CallStatus(String value) {
         this.value = value;

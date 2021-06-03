@@ -10,7 +10,7 @@ import com.twilio.sdk.verbs.Redirect;
  */
 public class RedirectBuilder {
 
-    private String url;
+    private final String url;
     private Method method = Method.POST;
 
     public RedirectBuilder(String url) {

@@ -11,7 +11,7 @@ import com.twilio.sdk.verbs.Say;
 public class SayBuilder {
 
     private Voice voice;
-    private String body;
+    private final String body;
 
     public SayBuilder(String body) {
         this.body = body;

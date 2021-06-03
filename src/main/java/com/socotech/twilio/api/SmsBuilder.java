@@ -12,7 +12,7 @@ public class SmsBuilder {
 
     private String to;
     private String from;
-    private String message;
+    private final String message;
 
     public SmsBuilder(String message) {
         this.message = message;
