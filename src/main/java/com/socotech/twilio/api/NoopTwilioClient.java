@@ -1,17 +1,15 @@
 package com.socotech.twilio.api;
 
-import com.twilio.sdk.TwilioRestException;
-import com.twilio.sdk.resource.instance.Call;
-import com.twilio.sdk.resource.instance.IncomingPhoneNumber;
-import com.twilio.sdk.resource.instance.Message;
-import com.twilio.sdk.resource.list.AvailablePhoneNumberList;
-import com.twilio.sdk.resource.list.IncomingPhoneNumberList;
-import com.twilio.sdk.resource.list.MessageList;
-import org.apache.http.NameValuePair;
+import com.twilio.base.ResourceSet;
+import com.twilio.rest.api.v2010.account.Call;
+import com.twilio.rest.api.v2010.account.IncomingPhoneNumber;
+import com.twilio.rest.api.v2010.account.Message;
+import com.twilio.rest.api.v2010.account.availablephonenumbercountry.Local;
+import com.twilio.type.PhoneNumber;
+import com.twilio.type.Twiml;
 
 import java.math.BigDecimal;
-import java.util.List;
-import java.util.Map;
+import java.time.ZonedDateTime;
 
 /**
  * Created with IntelliJ IDEA.
@@ -21,7 +19,7 @@ import java.util.Map;
  */
 public class NoopTwilioClient implements TwilioClient {
     @Override
-    public Call call(Map<String, String> params) throws TwilioRestException {
+    public Call call(PhoneNumber ph1, PhoneNumber ph2, Twiml twiml) {
         throw new UnsupportedOperationException();
     }
 
@@ -41,27 +39,27 @@ public class NoopTwilioClient implements TwilioClient {
     }
 
     @Override
-    public Message message(List<NameValuePair> params) throws TwilioRestException {
+    public Message message(PhoneNumber to, PhoneNumber from, String body) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public MessageList getMessages(Map<String, String> filters) {
+    public ResourceSet<Local> getAvailablePhoneNumbers(String areaCode, int pageSize) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public IncomingPhoneNumber createPhoneNumber(Map<String, String> params) throws TwilioRestException {
+    public ResourceSet<Message> getMessages(int pageSize, ZonedDateTime since) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public IncomingPhoneNumberList getIncomingPhoneNumbers() {
+    public IncomingPhoneNumber createPhoneNumber(String number) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public AvailablePhoneNumberList getAvailablePhoneNumbers(Map<String, String> vars) {
+    public ResourceSet<IncomingPhoneNumber> getIncomingPhoneNumbers(int pageSize) {
         throw new UnsupportedOperationException();
     }
 }

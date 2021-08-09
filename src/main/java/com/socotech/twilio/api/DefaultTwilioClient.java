@@ -4,23 +4,20 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.Maps;
-import com.twilio.sdk.TwilioRestClient;
-import com.twilio.sdk.TwilioRestException;
-import com.twilio.sdk.resource.instance.AvailablePhoneNumber;
-import com.twilio.sdk.resource.instance.Call;
-import com.twilio.sdk.resource.instance.IncomingPhoneNumber;
-import com.twilio.sdk.resource.instance.Message;
-import com.twilio.sdk.resource.list.AvailablePhoneNumberList;
-import com.twilio.sdk.resource.list.IncomingPhoneNumberList;
-import com.twilio.sdk.resource.list.MessageList;
-import org.apache.http.NameValuePair;
+import com.twilio.Twilio;
+import com.twilio.base.ResourceSet;
+import com.twilio.rest.api.v2010.account.Call;
+import com.twilio.rest.api.v2010.account.IncomingPhoneNumber;
+import com.twilio.rest.api.v2010.account.Message;
+import com.twilio.rest.api.v2010.account.availablephonenumbercountry.Local;
+import com.twilio.type.PhoneNumber;
+import com.twilio.type.Twiml;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.math.BigDecimal;
-import java.util.Collections;
+import java.time.ZonedDateTime;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -32,7 +29,6 @@ import java.util.concurrent.TimeUnit;
  */
 public class DefaultTwilioClient implements TwilioClient {
 
-    private final TwilioRestClient restClient;
     /**
      * Cache provisioned phone numbers
      */
@@ -45,7 +41,7 @@ public class DefaultTwilioClient implements TwilioClient {
      * @param authToken  auth token
      */
     public DefaultTwilioClient(String accountSid, String authToken) {
-        restClient = new TwilioRestClient(accountSid, authToken);
+        Twilio.init(accountSid, authToken);
     }
 
     /**
@@ -57,22 +53,19 @@ public class DefaultTwilioClient implements TwilioClient {
             @Override
             public String load(String areaCode) throws Exception {
                 // check for existing incoming with exact area code
-                Map<String, String> params = Collections.singletonMap("PhoneNumber", "+1" + areaCode);
-                Iterator<IncomingPhoneNumber> incomings = restClient.getAccount().getIncomingPhoneNumbers(params).iterator();
-                if (incomings.hasNext()) {
-                    return incomings.next().getPhoneNumber();
-                }
-                // check for existing incoming with "friendly" name as area code
-                Map<String, String> params2 = Collections.singletonMap("FriendlyName", areaCode);
-                Iterator<IncomingPhoneNumber> incomings2 = restClient.getAccount().getIncomingPhoneNumbers(params2).iterator();
-                if (incomings2.hasNext()) {
-                    return incomings2.next().getPhoneNumber();
+                ResourceSet<IncomingPhoneNumber> incomings = IncomingPhoneNumber.reader().setPhoneNumber(areaCode).limit(100).read();
+                for (IncomingPhoneNumber incoming : incomings) {
+                    if (incoming.getPhoneNumber().getEndpoint().startsWith("+1" + areaCode)) {
+                        return incoming.getPhoneNumber().getEndpoint();
+                    } else if (incoming.getFriendlyName().equals(areaCode)) {
+                        return incoming.getPhoneNumber().getEndpoint();
+                    }
                 }
                 // provision a new incoming number
                 String number = null;
-                Iterator<AvailablePhoneNumber> availables = findAvailablesUsingAreaCode(areaCode).iterator();
+                Iterator<Local> availables = findAvailablesUsingAreaCode(Integer.parseInt(areaCode)).iterator();
                 while (number == null && availables.hasNext()) {
-                    number = provisionIncomingNumber(areaCode, availables.next().getPhoneNumber());
+                    number = provisionIncomingNumber(Integer.parseInt(areaCode), availables.next().getPhoneNumber().getEndpoint());
                 }
                 // validate number
                 if (number == null) {
@@ -87,33 +80,39 @@ public class DefaultTwilioClient implements TwilioClient {
     }
 
     @Override
-    public Call call(Map<String, String> params) throws TwilioRestException {
-        return restClient.getAccount().getCallFactory().create(params);
+    public Call call(PhoneNumber to, PhoneNumber from, Twiml twiml) {
+        return Call.creator(to, from, twiml).create();
     }
 
     @Override
-    public Message message(List<NameValuePair> params) throws TwilioRestException {
-        return restClient.getAccount().getMessageFactory().create(params);
+    public Message message(PhoneNumber to, PhoneNumber from, String body) {
+        return Message.creator(to, from, body).create();
     }
 
     @Override
-    public MessageList getMessages(Map<String, String> filters) {
-        return restClient.getAccount().getMessages(filters);
+    public ResourceSet<Local> getAvailablePhoneNumbers(String areaCode, int pageSize) {
+        ResourceSet<Local> reader = Local.reader("US").setAreaCode(Integer.parseInt(areaCode)).pageSize(pageSize).read();
+        reader.setAutoPaging(true);
+        return reader;
     }
 
     @Override
-    public IncomingPhoneNumber createPhoneNumber(Map<String, String> params) throws TwilioRestException {
-        return this.restClient.getAccount().getIncomingPhoneNumberFactory().create(params);
+    public ResourceSet<Message> getMessages(int pageSize, ZonedDateTime since) {
+        ResourceSet<Message> reader = Message.reader("US").setDateSentAfter(since).pageSize(pageSize).read();
+        reader.setAutoPaging(true);
+        return reader;
     }
 
     @Override
-    public IncomingPhoneNumberList getIncomingPhoneNumbers() {
-        return this.restClient.getAccount().getIncomingPhoneNumbers();
+    public IncomingPhoneNumber createPhoneNumber(String number) {
+        return IncomingPhoneNumber.creator(new PhoneNumber(number)).create();
     }
 
     @Override
-    public AvailablePhoneNumberList getAvailablePhoneNumbers(Map<String, String> vars) {
-        return this.restClient.getAccount().getAvailablePhoneNumbers(vars);
+    public ResourceSet<IncomingPhoneNumber> getIncomingPhoneNumbers(int pageSize) {
+        ResourceSet<IncomingPhoneNumber> read = IncomingPhoneNumber.reader().pageSize(pageSize).read();
+        read.setAutoPaging(true);
+        return read;
     }
 
     @Override
@@ -127,9 +126,9 @@ public class DefaultTwilioClient implements TwilioClient {
         // got an area code number?
         if (number == null) {
             // provision a number using lat/lon
-            Iterator<AvailablePhoneNumber> list = this.findAvailablesUsingGeoLocation(lat, lon).iterator();
+            Iterator<Local> list = this.findAvailablesUsingGeoLocation(lat, lon).iterator();
             if (list.hasNext()) {
-                return this.provisionIncomingNumber(areaCode, list.next().getPhoneNumber());
+                return this.provisionIncomingNumber(Integer.parseInt(areaCode), list.next().getPhoneNumber().getEndpoint());
             }
         }
         return number;
@@ -141,14 +140,14 @@ public class DefaultTwilioClient implements TwilioClient {
         // got an area code number?
         if (number == null) {
             // provision a number using postal code
-            Iterator<AvailablePhoneNumber> list = this.findAvailablesUsingPostalCode(postalCode).iterator();
+            Iterator<Local> list = this.findAvailablesUsingPostalCode(postalCode).iterator();
             if (list.hasNext()) {
-                return this.provisionIncomingNumber(areaCode, list.next().getPhoneNumber());
+                return this.provisionIncomingNumber(Integer.parseInt(areaCode), list.next().getPhoneNumber().getEndpoint());
             } else {
                 // provision a number using lat/lon
                 list = this.findAvailablesUsingGeoLocation(lat, lon).iterator();
                 if (list.hasNext()) {
-                    return this.provisionIncomingNumber(areaCode, list.next().getPhoneNumber());
+                    return this.provisionIncomingNumber(Integer.parseInt(areaCode), list.next().getPhoneNumber().getEndpoint());
                 } else {
                     // provision a number using 817 area code
                     number = this.getIncomingByAreaCode("817");
@@ -168,31 +167,20 @@ public class DefaultTwilioClient implements TwilioClient {
         return number;
     }
 
-    private String provisionIncomingNumber(String areaCode, String number) {
-        try {
-            Map<String, String> vars = newProvisioningParams();
-            vars.put("PhoneNumber", number);
-            vars.put("FriendlyName", areaCode);
-            return restClient.getAccount().getIncomingPhoneNumberFactory().create(vars).getPhoneNumber();
-        } catch (TwilioRestException e) {
-            log.error(e.getMessage(), e);
-        }
-        return null; // fail :(
+    private String provisionIncomingNumber(Integer areaCode, String number) {
+        return IncomingPhoneNumber.creator(new PhoneNumber(number)).setFriendlyName(Integer.toString(areaCode)).create().getPhoneNumber().getEndpoint();
     }
 
-    private Iterable<AvailablePhoneNumber> findAvailablesUsingAreaCode(String areaCode) {
-        Map<String, String> vars = Collections.singletonMap("AreaCode", areaCode);
-        return restClient.getAccount().getAvailablePhoneNumbers(vars);
+    private Iterable<Local> findAvailablesUsingAreaCode(int areaCode) {
+        return Local.reader("US").setAreaCode(areaCode).limit(20).read();
     }
 
-    private Iterable<AvailablePhoneNumber> findAvailablesUsingPostalCode(String postalCode) {
-        Map<String, String> vars = Collections.singletonMap("InPostalCode", postalCode);
-        return restClient.getAccount().getAvailablePhoneNumbers(vars);
+    private Iterable<Local> findAvailablesUsingPostalCode(String postalCode) {
+        return Local.reader("US").setInPostalCode(postalCode).limit(20).read();
     }
 
-    private Iterable<AvailablePhoneNumber> findAvailablesUsingGeoLocation(BigDecimal lat, BigDecimal lon) {
-        Map<String, String> vars = Collections.singletonMap("NearLatLong", lat.toString() + "," + lon.toString());
-        return restClient.getAccount().getAvailablePhoneNumbers(vars);
+    private Iterable<Local> findAvailablesUsingGeoLocation(BigDecimal lat, BigDecimal lon) {
+        return Local.reader("US").setNearLatLong(String.join(",", lat.toPlainString(), lon.toPlainString())).limit(20).read();
     }
 
     private Map<String, String> newProvisioningParams() {

@@ -1,17 +1,15 @@
 package com.socotech.twilio.api;
 
-import com.twilio.sdk.TwilioRestException;
-import com.twilio.sdk.resource.instance.Call;
-import com.twilio.sdk.resource.instance.IncomingPhoneNumber;
-import com.twilio.sdk.resource.instance.Message;
-import com.twilio.sdk.resource.list.AvailablePhoneNumberList;
-import com.twilio.sdk.resource.list.IncomingPhoneNumberList;
-import com.twilio.sdk.resource.list.MessageList;
-import org.apache.http.NameValuePair;
+import com.twilio.base.ResourceSet;
+import com.twilio.rest.api.v2010.account.Call;
+import com.twilio.rest.api.v2010.account.IncomingPhoneNumber;
+import com.twilio.rest.api.v2010.account.Message;
+import com.twilio.rest.api.v2010.account.availablephonenumbercountry.Local;
+import com.twilio.type.PhoneNumber;
+import com.twilio.type.Twiml;
 
 import java.math.BigDecimal;
-import java.util.List;
-import java.util.Map;
+import java.time.ZonedDateTime;
 
 /**
  * Created with IntelliJ IDEA.
@@ -21,7 +19,7 @@ import java.util.Map;
  */
 public interface TwilioClient {
 
-    Call call(Map<String, String> params) throws TwilioRestException;
+    Call call(PhoneNumber ph1, PhoneNumber ph2, Twiml twiml);
 
     String getOrProvisionNumber(String areaCode);
 
@@ -29,14 +27,14 @@ public interface TwilioClient {
 
     String getOrProvisionNumber(String areaCode, String postalCode, BigDecimal lat, BigDecimal lon);
 
-    Message message(List<NameValuePair> params) throws TwilioRestException;
+    Message message(PhoneNumber to, PhoneNumber from, String body);
 
-    MessageList getMessages(Map<String, String> filters);
+    ResourceSet<Local> getAvailablePhoneNumbers(String areaCode, int pageSize);
 
-    IncomingPhoneNumber createPhoneNumber(Map<String, String> params) throws TwilioRestException;
+    ResourceSet<Message> getMessages(int pageSize, ZonedDateTime since);
 
-    IncomingPhoneNumberList getIncomingPhoneNumbers();
+    IncomingPhoneNumber createPhoneNumber(String number);
 
-    AvailablePhoneNumberList getAvailablePhoneNumbers(Map<String, String> vars);
+    ResourceSet<IncomingPhoneNumber> getIncomingPhoneNumbers(int pageSize);
 
 }
