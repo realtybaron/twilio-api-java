@@ -29,6 +29,7 @@ import java.util.concurrent.TimeUnit;
  */
 public class DefaultTwilioClient implements TwilioClient {
 
+    private final String accountSid;
     /**
      * Cache provisioned phone numbers
      */
@@ -41,6 +42,7 @@ public class DefaultTwilioClient implements TwilioClient {
      * @param authToken  auth token
      */
     public DefaultTwilioClient(String accountSid, String authToken) {
+        this.accountSid = accountSid;
         Twilio.init(accountSid, authToken);
     }
 
@@ -53,7 +55,7 @@ public class DefaultTwilioClient implements TwilioClient {
             @Override
             public String load(String areaCode) throws Exception {
                 // check for existing incoming with exact area code
-                ResourceSet<IncomingPhoneNumber> incomings = IncomingPhoneNumber.reader().setPhoneNumber(areaCode).limit(100).read();
+                ResourceSet<IncomingPhoneNumber> incomings = IncomingPhoneNumber.reader(accountSid).setPhoneNumber(areaCode).limit(100).read();
                 for (IncomingPhoneNumber incoming : incomings) {
                     if (incoming.getPhoneNumber().getEndpoint().startsWith("+1" + areaCode)) {
                         return incoming.getPhoneNumber().getEndpoint();
@@ -98,7 +100,7 @@ public class DefaultTwilioClient implements TwilioClient {
 
     @Override
     public ResourceSet<Message> getMessages(int pageSize, ZonedDateTime since) {
-        ResourceSet<Message> reader = Message.reader("US").setDateSentAfter(since).pageSize(pageSize).read();
+        ResourceSet<Message> reader = Message.reader(accountSid).setDateSentAfter(since).pageSize(pageSize).read();
         reader.setAutoPaging(true);
         return reader;
     }
@@ -110,7 +112,7 @@ public class DefaultTwilioClient implements TwilioClient {
 
     @Override
     public ResourceSet<IncomingPhoneNumber> getIncomingPhoneNumbers(int pageSize) {
-        ResourceSet<IncomingPhoneNumber> read = IncomingPhoneNumber.reader().pageSize(pageSize).read();
+        ResourceSet<IncomingPhoneNumber> read = IncomingPhoneNumber.reader(accountSid).pageSize(pageSize).read();
         read.setAutoPaging(true);
         return read;
     }
