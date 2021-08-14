@@ -1,9 +1,11 @@
 package com.socotech.twilio;
 
-import com.socotech.twilio.api.DefaultTwilioClient;
 import com.socotech.twilio.api.TwilioClient;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 
 import java.time.ZonedDateTime;
 
@@ -15,7 +17,13 @@ import java.time.ZonedDateTime;
  */
 public class TwilioClientTest {
 
-    private final TwilioClient twilioClient = new DefaultTwilioClient("AC62bce54e61297a05c41339a4114ae9ed", "f2fdd2ea2927a82ec3bdad91c01816e5");
+    @Mock
+    TwilioClient twilioClient;
+
+    @Before
+    public void setUp() throws Exception {
+        MockitoAnnotations.openMocks(this);
+    }
 
     @Test
     public void testGetMessageList() {
