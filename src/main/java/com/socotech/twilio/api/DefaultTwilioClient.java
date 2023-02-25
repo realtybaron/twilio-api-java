@@ -3,7 +3,6 @@ package com.socotech.twilio.api;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
-import com.google.common.collect.Maps;
 import com.twilio.Twilio;
 import com.twilio.base.ResourceSet;
 import com.twilio.rest.api.v2010.account.Call;
@@ -17,6 +16,7 @@ import org.slf4j.LoggerFactory;
 
 import java.math.BigDecimal;
 import java.time.ZonedDateTime;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -186,7 +186,7 @@ public class DefaultTwilioClient implements TwilioClient {
     }
 
     private Map<String, String> newProvisioningParams() {
-        Map<String, String> vars = Maps.newHashMap();
+        Map<String, String> vars = new HashMap<>();
         vars.put("VoiceUrl", "http://twimlbin.com/external/25c03e2c50357eab");
         return vars;
     }
